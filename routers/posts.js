@@ -7,7 +7,7 @@ const postsControllers = require("../controllers/postControllers.js");
 router.get("/", postsControllers.index);
 
 // SHOW
-router.get("/:title", postsControllers.show);
+router.get("/:id", postsControllers.show);
 
 // STORE
 router.post("/", postsControllers.store);

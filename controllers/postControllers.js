@@ -16,19 +16,22 @@ const index = (req, res) => {
 };
 
 const show = (req, res) => {
-  const post = posts.find(
-    (post) => post.title.toLowerCase() === req.params.title
-  );
-  // console.log(post);
+  const id = req.params.id;
 
-  if (!post) {
-    return res
-      .status(404)
-      .json({ error: `post con titolo ${req.params.title} non trovato` });
-  }
+  const sql = "SELECT * FROM posts WHERE id = ?";
 
-  return res.status(200).json({
-    data: post,
+  connection.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ error: `404! No post found with this id: ${id}` });
+    }
+
+    return res.status(200).json({
+      data: results[0],
+    });
   });
 };
 
@@ -106,24 +109,6 @@ const destroy = (req, res) => {
     });
   });
 };
-
-// const titleToDelete = req.params.title.toLowerCase();
-// const index = posts.findIndex(
-//   (post) => post.title.toLowerCase() === titleToDelete
-// );
-
-// if (index === -1) {
-//   return res.status(404).json({ error: "Post non trovato" });
-// }
-
-// posts.splice(index, 1);
-
-// fs.writeFileSync(
-//   "./db/posts.js",
-//   `module.exports = ${JSON.stringify(posts, null, 4)}`
-// );
-
-// return res.json({ data: posts });
 
 module.exports = {
   index,
