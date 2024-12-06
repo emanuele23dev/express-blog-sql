@@ -16,6 +16,6 @@ router.post("/", postsControllers.store);
 router.put("/:title", postsControllers.update);
 
 // DELETE
-router.delete("/:title", postsControllers.destroy);
+router.delete("/:id", postsControllers.destroy);
 
 module.exports = router;

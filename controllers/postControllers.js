@@ -13,11 +13,6 @@ const index = (req, res) => {
     };
     res.status(200).json(responsData);
   });
-
-  // res.json({
-  //   data: posts,
-  //   count: posts.length,
-  // });
 };
 
 const show = (req, res) => {
@@ -91,47 +86,44 @@ const update = (req, res) => {
   });
 };
 
-// QUESTA 👇 SOTTO E LA PRIMA DESTROY SCRITTA QUANDO NON SERVIVA LATO CLIENT
-// const destroy = (req, res) => {
+const destroy = (req, res) => {
+  const id = req.params.id;
 
-// const post = posts.find((post) => post.title.toLowerCase() === req.params.title)
+  const sql = "DELETE FROM posts WHERE id =?";
 
-//  if (!post) {
-//    res.status(404).json({
-//     error: `nessun post con questo titolo ${req.params.title}`})
-//  }
+  connection.query(sql, [id], (err, results) => {
+    console.log(err, results.affectedRows);
 
-// const newPosts = posts.filter((post) => post.title.toLowerCase() !== req.params.title)
+    if (err) return res.status(500).json({ error: err });
 
-//  fs.writeFileSync("./db/posts.js", `module.exports = ${JSON.stringify(newPosts, null, 4)}`);
+    if (results.affectedRows === 0)
+      return res
+        .status(404)
+        .json({ error: `404! No post found with this id: ${id}` });
 
-//  res.status(200).json({
-//   status: 200,
-//   data: newPosts
-//  })
+    return res.status(204).json({
+      status: 204,
+    });
+  });
+};
 
+// const titleToDelete = req.params.title.toLowerCase();
+// const index = posts.findIndex(
+//   (post) => post.title.toLowerCase() === titleToDelete
+// );
+
+// if (index === -1) {
+//   return res.status(404).json({ error: "Post non trovato" });
 // }
 
-// QUESTA 👇 SOTTO E LA SECONDA DESTROY SCRITTA LATO CLIENT PER CANCELLARE ANCHE GLI OGGETTI INIZIALI DELL'ARRAY
-const destroy = (req, res) => {
-  const titleToDelete = req.params.title.toLowerCase();
-  const index = posts.findIndex(
-    (post) => post.title.toLowerCase() === titleToDelete
-  );
+// posts.splice(index, 1);
 
-  if (index === -1) {
-    return res.status(404).json({ error: "Post non trovato" });
-  }
+// fs.writeFileSync(
+//   "./db/posts.js",
+//   `module.exports = ${JSON.stringify(posts, null, 4)}`
+// );
 
-  posts.splice(index, 1);
-
-  fs.writeFileSync(
-    "./db/posts.js",
-    `module.exports = ${JSON.stringify(posts, null, 4)}`
-  );
-
-  return res.json({ data: posts });
-};
+// return res.json({ data: posts });
 
 module.exports = {
   index,
